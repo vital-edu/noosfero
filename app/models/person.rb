@@ -382,7 +382,7 @@ class Person < Profile
 
 
   def self.with_pending_tasks
-    Person.find(:all).select{ |person| !person.tasks.pending.empty? or person.has_organization_pending_tasks? }
+    Person.all.select{ |person| !person.tasks.pending.empty? or person.has_organization_pending_tasks? }
   end
 
   def has_organization_pending_tasks?
@@ -558,7 +558,7 @@ class Person < Profile
   end
 
   def remove_suggestion(profile)
-    suggestion = suggested_profiles.find_by_suggestion_id profile.id
+    suggestion = suggested_profiles.find_by suggestion_id: profile.id
     suggestion.disable if suggestion
   end
 

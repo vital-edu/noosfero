@@ -14,7 +14,7 @@ class StoaPlugin::Auth < Sinatra::Base
       login = params[:login]
     end
 
-    domain = Domain.find_by_name(request.host)
+    domain = Domain.by_name(request.host)
     environment = domain && domain.environment
     environment ||= Environment.default
 

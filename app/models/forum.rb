@@ -10,7 +10,7 @@ class Forum < Folder
 
   before_save do |forum|
     if forum.has_terms_of_use
-      last_editor = forum.profile.environment.people.find_by_id(forum.last_changed_by_id)
+      last_editor = forum.profile.environment.people.find_by(id: forum.last_changed_by_id)
       if last_editor && !forum.users_with_agreement.exists?(last_editor)
         forum.users_with_agreement << last_editor
       end

@@ -729,7 +729,7 @@ class Article < ActiveRecord::Base
 
   def version_license(version_number = nil)
     return license if version_number.nil?
-    profile.environment.licenses.find_by_id(get_version(version_number).license_id)
+    profile.environment.licenses.find_by(id: get_version(version_number).license_id)
   end
 
   alias :active_record_cache_key :cache_key

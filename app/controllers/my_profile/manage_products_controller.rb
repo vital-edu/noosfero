@@ -35,7 +35,7 @@ class ManageProductsController < ApplicationController
   end
 
   def categories_for_selection
-    @category = environment.categories.find_by_id params[:category_id]
+    @category = environment.categories.find_by id: params[:category_id]
     @object_name = params[:object_name]
     if @category
       @categories = @category.children
@@ -169,7 +169,7 @@ class ManageProductsController < ApplicationController
 
   def edit_input
     if request.xhr?
-      @input = @profile.inputs.find_by_id(params[:id])
+      @input = @profile.inputs.find_by id: params[:id]
       if @input
         if request.post?
           if @input.update(params[:input])

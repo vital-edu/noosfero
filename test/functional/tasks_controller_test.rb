@@ -197,7 +197,7 @@ class TasksControllerTest < ActionController::TestCase
     t = ApproveArticle.create!(:name => 'test name', :article => article, :target => c, :requestor => profile)
 
     post :close, :tasks => {t.id => {:decision => 'finish', :task => {:name => 'new_name'}}}
-    assert_equal article, c.articles.find_by_name('new_name').reference_article
+    assert_equal article, c.articles.find_by(name: 'new_name').reference_article
   end
 
   should 'create published article in folder after finish approve article task' do
@@ -210,7 +210,7 @@ class TasksControllerTest < ActionController::TestCase
     t = ApproveArticle.create!(:name => 'test name', :article => article, :target => c, :requestor => profile)
 
     post :close, :tasks => {t.id => {:decision => 'finish', :task => {:name => 'new_name', :article_parent_id => folder.id}}}
-    assert_equal folder, c.articles.find_by_name('new_name').parent
+    assert_equal folder, c.articles.find_by(name: 'new_name').parent
   end
 
   should 'be highlighted if asked when approving a published article' do
@@ -223,7 +223,7 @@ class TasksControllerTest < ActionController::TestCase
     t = ApproveArticle.create!(:article => article, :target => c, :requestor => profile)
 
     post :close, :tasks => {t.id => {:decision => 'finish', :task => {:name => 'new_name', :article_parent_id => folder.id, :highlighted => true}}}
-    assert_equal true, c.articles.find_by_name('new_name').highlighted
+    assert_equal true, c.articles.find_by(name: 'new_name').highlighted
   end
 
   should 'create article of same class after choosing root folder on approve article task' do
@@ -235,7 +235,7 @@ class TasksControllerTest < ActionController::TestCase
     t = ApproveArticle.create!(:article => article, :target => c, :requestor => profile)
 
     post :close, :tasks => {t.id => {:decision => 'finish', :task => {:name => 'new_name', :article_parent_id => ""}}}
-    assert_not_nil c.articles.find_by_name('new_name')
+    assert_not_nil c.articles.find_by(name: 'new_name')
   end
 
   should 'handle blank names for published articles' do
@@ -255,7 +255,7 @@ class TasksControllerTest < ActionController::TestCase
     assert_difference 'article.class.count' do
       post :close, :tasks => {a.id => {:decision => 'finish', :task => {:name => "", :highlighted => "0", :article_parent_id => c_blog2.id.to_s}}}
     end
-    assert p_article = article.class.find_by_reference_article_id(article.id)
+    assert p_article = article.class.find_by(reference_article_id: article.id)
     assert_includes c_blog2.children(true), p_article
   end
 

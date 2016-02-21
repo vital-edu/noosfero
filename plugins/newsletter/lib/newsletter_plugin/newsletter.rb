@@ -49,7 +49,7 @@ class NewsletterPlugin::Newsletter < ActiveRecord::Base
 
   validates_each :blog_ids do |record, attr, value|
     if record.environment
-      unless value.delete_if(&:zero?).select { |id| !Blog.find_by_id(id) || Blog.find(id).environment != record.environment }.empty?
+      unless value.delete_if(&:zero?).select { |id| !Blog.find_by(id: id) || Blog.find(id).environment != record.environment }.empty?
         record.errors.add(attr, _('must be valid'))
       end
     end

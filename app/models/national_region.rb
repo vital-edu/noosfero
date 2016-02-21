@@ -60,9 +60,8 @@ class NationalRegion < ActiveRecord::Base
 
   def self.validate!(city, state, country)
 
-    country_region = NationalRegion.find_by_national_region_code(country,
-                                                :conditions => ["national_region_type_id = :type",
-                                                               {:type => NationalRegionType::COUNTRY}])
+    country_region = NationalRegion
+      .find_by(national_region_code: country, national_region_type_id: NationalRegionType::COUNTRY)
 
     if(country_region)
 

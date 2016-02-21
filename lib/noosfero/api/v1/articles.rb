@@ -71,7 +71,7 @@ module Noosfero
               current_person.register_report(abuse_report, profile)
 
               if !params[:content_type].blank?
-                abuse_report = AbuseReport.find_by_reporter_id_and_abuse_complaint_id(current_person.id, profile.opened_abuse_complaint.id)
+                abuse_report = AbuseReport.find_by reporter_id: current_person.id, abuse_complaint_id: profile.opened_abuse_complaint.id
                 Delayed::Job.enqueue DownloadReportedImagesJob.new(abuse_report, article)
               end
 
@@ -222,7 +222,7 @@ module Noosfero
                   profile = environment.send(kind.pluralize).find(params["#{kind}_id"])
 
                   if params[:path].present?
-                    article = profile.articles.find_by_path(params[:path])
+                    article = profile.articles.find_by path: params[:path]
                     if !article || !article.display_to?(current_person)
                       article = forbidden!
                     end

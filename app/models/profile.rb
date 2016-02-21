@@ -55,7 +55,7 @@ class Profile < ActiveRecord::Base
     end
     private
     def self.find_role(name, env_id)
-      ::Role.find_by_key_and_environment_id("profile_#{name}", env_id)
+      ::Role.find_by key: 'profile_#{name}', environment_id: env_id
     end
   end
 
@@ -532,7 +532,7 @@ class Profile < ActiveRecord::Base
     #  person = Profile['username']
     #  org = Profile.['orgname']
     def [](identifier)
-      self.find_by_identifier(identifier)
+      self.find_by identifier: identifier
     end
 
   end
@@ -709,11 +709,11 @@ private :generate_url, :url_options
 
   def copy_article_tree(article, parent=nil)
     return if !copy_article?(article)
-    original_article = self.articles.find_by_name(article.name)
+    original_article = self.articles.find_by name: article.name
     if original_article
       num = 2
       new_name = original_article.name + ' ' + num.to_s
-      while self.articles.find_by_name(new_name)
+      while self.articles.find_by name: new_name
         num = num + 1
         new_name = original_article.name + ' ' + num.to_s
       end
@@ -1097,7 +1097,7 @@ private :generate_url, :url_options
   settings_items :custom_url_redirection, type: String, default: nil
 
   def remove_from_suggestion_list(person)
-    suggestion = person.suggested_profiles.find_by_suggestion_id self.id
+    suggestion = person.suggested_profiles.find_by suggestion_id: self.id
     suggestion.disable if suggestion
   end
 

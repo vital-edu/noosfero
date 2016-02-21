@@ -57,7 +57,7 @@ class ProfileRolesControllerTest < ActionController::TestCase
     role = Role.create! name: 'delete_article', key: 'profile_delete_article',
       profile_id: community.id, environment: Environment.default
     admin.add_role(role, community)
-    moderator_role = Role.find_by_name("moderator")
+    moderator_role = Role.find_by(name: "moderator")
 
     assert_not_includes community.members_by_role(moderator_role), admin
 
@@ -91,7 +91,7 @@ class ProfileRolesControllerTest < ActionController::TestCase
     login_as :admin_user
     role = Role.create! name: 'delete_article', key: 'profile_delete_article',
       profile_id: community.id, environment: Environment.default
-    moderator_role = Role.find_by_name("moderator")
+    moderator_role = Role.find_by(name: "moderator")
     admin.add_role(moderator_role, community)
 
     assert_not_includes community.members_by_role(role), admin

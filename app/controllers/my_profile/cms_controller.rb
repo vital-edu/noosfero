@@ -32,7 +32,7 @@ class CmsController < MyProfileController
   end
 
   protect_if :only => [:new, :upload_files] do |c, user, profile|
-    parent = profile.articles.find_by_id(c.params[:parent_id])
+    parent = profile.articles.find_by(id: c.params[:parent_id])
     user && user.can_post_content?(profile, parent)
   end
 

@@ -1,6 +1,8 @@
 class Box < ActiveRecord::Base
+
+  acts_as_list scope: -> box { where owner_id: box.owner_id, owner_type: box.owner_type }
+
   belongs_to :owner, :polymorphic => true
-  acts_as_list :scope => 'owner_id = #{owner_id} and owner_type = \'#{owner_type}\''
   has_many :blocks, -> { order 'position' }, dependent: :destroy
 
   include Noosfero::Plugin::HotSpot

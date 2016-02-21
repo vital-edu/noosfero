@@ -324,7 +324,7 @@ class ProfileController < PublicController
         user.register_report(abuse_report, profile)
 
         if !params[:content_type].blank?
-          abuse_report = AbuseReport.find_by_reporter_id_and_abuse_complaint_id(user.id, profile.opened_abuse_complaint.id)
+          abuse_report = AbuseReport.find_by(reporter_id: user.id, abuse_complaint_id: profile.opened_abuse_complaint.id)
           Delayed::Job.enqueue DownloadReportedImagesJob.new(abuse_report, article)
         end
 

@@ -597,7 +597,7 @@ class ArticleTest < ActiveSupport::TestCase
     a.name = 'new-name'
     a.save!
 
-    page = Article.find_by_old_path(old_path)
+    page = Article.find_by(old_path: old_path)
 
     assert_equal a.path, page.path
   end
@@ -610,7 +610,7 @@ class ArticleTest < ActiveSupport::TestCase
     a1.save!
     a2 = p.articles.create!(:name => 'old-name')
 
-    page = Article.find_by_old_path(old_path)
+    page = Article.find_by(old_path: old_path)
 
     assert_equal a2.path, page.path
   end
@@ -625,7 +625,7 @@ class ArticleTest < ActiveSupport::TestCase
     a2.name = 'other-new-name'
     a2.save!
 
-    page = Article.find_by_old_path(old_path)
+    page = Article.find_by(old_path: old_path)
 
     assert_equal a2.path, page.path
   end
@@ -639,7 +639,7 @@ class ArticleTest < ActiveSupport::TestCase
 
     p2 = create_user('another_user').person
 
-    page = p2.articles.find_by_old_path(old_path)
+    page = p2.articles.find_by(old_path: old_path)
 
     assert_nil page
   end
@@ -917,7 +917,7 @@ class ArticleTest < ActiveSupport::TestCase
     a = create(ApproveArticle, :article => article, :target => community, :requestor => profile)
     a.finish
 
-    published = community.articles.find_by_name('article name')
+    published = community.articles.find_by(name: 'article name')
     published.name = 'title with "quotes"'
     published.save
     assert_equal 'title with "quotes"', published.name

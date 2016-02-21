@@ -11,7 +11,7 @@ class SnifferPlugin::Profile < ActiveRecord::Base
   validates_presence_of :profile
 
   def self.find_or_create profile
-    sniffer = SnifferPlugin::Profile.find_by_profile_id profile.id
+    sniffer = SnifferPlugin::Profile.find_by profile_id: profile.id
     if sniffer.nil?
       sniffer = SnifferPlugin::Profile.new
       sniffer.profile = profile

@@ -29,7 +29,7 @@ class ManageDocumentsTest < ActionDispatch::IntegrationTest
 
     assert_response :redirect
     follow_redirect!
-    a = Article.find_by_path('my-article')
+    a = Article.find_by(path: 'my-article')
     assert_equal "/myuser/#{a.slug}", path
   end
 
@@ -63,7 +63,7 @@ class ManageDocumentsTest < ActionDispatch::IntegrationTest
 
     assert_response :redirect
     follow_redirect!
-    a = Article.find_by_path('my-article')
+    a = Article.find_by(path: 'my-article')
     assert_equal "/myuser/#{a.slug}", path
   end
 

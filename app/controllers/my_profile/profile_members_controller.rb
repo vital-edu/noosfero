@@ -3,7 +3,7 @@ class ProfileMembersController < MyProfileController
 
   def index
     @members = profile.members_by_name
-    @member_role = environment.roles.find_by_name('member')
+    @member_role = environment.roles.find_by(name: 'member')
   end
 
   def update_roles
@@ -101,7 +101,7 @@ class ProfileMembersController < MyProfileController
     @collection = :profile_admins
 
     if profile.community?
-      member = profile.members.find_by_identifier(params[:id])
+      member = profile.members.find_by(identifier: params[:id])
       profile.add_admin(member)
     end
     render :layout => false
@@ -112,7 +112,7 @@ class ProfileMembersController < MyProfileController
     @collection = :profile_admins
 
     if profile.community?
-      member = profile.members.find_by_identifier(params[:id])
+      member = profile.members.find_by(identifier: params[:id])
       profile.remove_admin(member)
     end
     render :layout => false

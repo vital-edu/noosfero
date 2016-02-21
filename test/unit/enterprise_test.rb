@@ -76,8 +76,8 @@ class EnterpriseTest < ActiveSupport::TestCase
     Enterprise.any_instance.expects(:default_set_of_articles).returns([blog])
     enterprise = create(Enterprise, :name => 'my test enterprise', :identifier => 'myenterprise')
 
-    assert_kind_of Blog, enterprise.articles.find_by_path(blog.path)
-    assert_kind_of RssFeed, enterprise.articles.find_by_path(blog.feed.path)
+    assert_kind_of Blog, enterprise.articles.find_by(path: blog.path)
+    assert_kind_of RssFeed, enterprise.articles.find_by(path: blog.feed.path)
   end
 
   should 'create default set of blocks' do
