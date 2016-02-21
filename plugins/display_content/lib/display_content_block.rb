@@ -28,8 +28,6 @@ class DisplayContentBlock < Block
   settings_items :order_by_recent, :type => :boolean, :default => :true
   settings_items :limit_to_show, :type => :integer, :default => 6
 
-  attr_accessible :sections, :checked_nodes, :display_folder_children, :types, :order_by_recent, :limit_to_show
-
   def self.description
     _('Display your contents')
   end

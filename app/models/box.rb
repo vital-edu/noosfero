@@ -3,8 +3,6 @@ class Box < ActiveRecord::Base
   acts_as_list :scope => 'owner_id = #{owner_id} and owner_type = \'#{owner_type}\''
   has_many :blocks, -> { order 'position' }, dependent: :destroy
 
-  attr_accessible :owner
-
   include Noosfero::Plugin::HotSpot
 
   scope :with_position, -> { where 'boxes.position > 0' }

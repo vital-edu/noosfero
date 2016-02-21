@@ -39,8 +39,6 @@ class Task < ActiveRecord::Base
   validates_uniqueness_of :code, :on => :create
   validates_presence_of :code
 
-  attr_protected :status
-
   def initialize(*args)
     super
     self.status = (args.first ? args.first[:status] : nil) || Task::Status::ACTIVE

@@ -4,10 +4,6 @@ class WorkAssignmentPlugin::WorkAssignment < Folder
   settings_items :default_email, :type => :string, :default => ""
   settings_items :allow_visibility_edition, :type => :boolean, :default => false
 
-  attr_accessible :publish_submissions
-  attr_accessible :default_email
-  attr_accessible :allow_visibility_edition
-  
   def self.icon_name(article = nil)
     'work-assignment'
   end
@@ -40,15 +36,12 @@ class WorkAssignmentPlugin::WorkAssignment < Folder
 
   def find_or_create_author_folder(author)
     children.find_by_slug(author.name.to_slug) || Folder.create!(
-                                                                {
-                                                                  :name => author.name,
-                                                                  :parent => self,
-                                                                  :profile => profile,
-                                                                  :author => author,
-                                                                  :published => publish_submissions,
-                                                                }, 
-                                                                :without_protection => true
-                                                  )
+      name:      author.name,
+      parent:    self,
+      profile:   profile,
+      author:    author,
+      published: publish_submissions,
+    )
   end
 
   def submissions
@@ -58,5 +51,5 @@ class WorkAssignmentPlugin::WorkAssignment < Folder
   def cache_key_with_person(params = {}, user = nil, language = 'en')
     cache_key_without_person + (user && profile.members.include?(user) ? "-#{user.identifier}" : '')
   end
-  alias_method_chain :cache_key, :person  
+  alias_method_chain :cache_key, :person
 end

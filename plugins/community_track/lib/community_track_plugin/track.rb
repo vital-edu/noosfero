@@ -5,8 +5,6 @@ class CommunityTrackPlugin::Track < Folder
 
   validate :validate_categories
 
-  attr_accessible :goals, :expected_results
-
   def validate_categories
     errors.add(:categories, _('should not be blank.')) if categories.empty? && pending_categorizations.blank?
   end
