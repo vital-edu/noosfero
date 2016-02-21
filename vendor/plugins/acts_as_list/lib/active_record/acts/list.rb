@@ -58,10 +58,6 @@ module ActiveRecord
           class_eval <<-EOV
             include ActiveRecord::Acts::List::InstanceMethods
 
-            def acts_as_list_class
-              ::#{self.name}
-            end
-
             def position_column
               '#{configuration[:column]}'
             end
@@ -88,7 +84,7 @@ module ActiveRecord
         def move_lower
           return unless lower_item
 
-          acts_as_list_class.transaction do
+          self.class.transaction do
             lower_item.decrement_position
             increment_position
           end
@@ -98,7 +94,7 @@ module ActiveRecord
         def move_higher
           return unless higher_item
 
-          acts_as_list_class.transaction do
+          self.class.transaction do
             higher_item.increment_position
             decrement_position
           end
@@ -108,7 +104,7 @@ module ActiveRecord
         # position adjusted accordingly.
         def move_to_bottom
           return unless in_list?
-          acts_as_list_class.transaction do
+          self.class.transaction do
             decrement_positions_on_lower_items
             assume_bottom_position
           end
@@ -118,7 +114,7 @@ module ActiveRecord
         # position adjusted accordingly.
         def move_to_top
           return unless in_list?
-          acts_as_list_class.transaction do
+          self.class.transaction do
             increment_positions_on_higher_items
             assume_top_position
           end
@@ -159,13 +155,13 @@ module ActiveRecord
         # Return the next higher item in the list.
         def higher_item
           return nil unless in_list?
-          acts_as_list_class.where("#{scope_condition} AND #{position_column} = #{(send(position_column).to_i - 1).to_s}").first
+          self.class.where("#{scope_condition} AND #{position_column} = #{(send(position_column).to_i - 1).to_s}").first
         end
 
         # Return the next lower item in the list.
         def lower_item
           return nil unless in_list?
-          acts_as_list_class.where("#{scope_condition} AND #{position_column} = #{(send(position_column).to_i + 1).to_s}").first
+          self.class.where("#{scope_condition} AND #{position_column} = #{(send(position_column).to_i + 1).to_s}").first
         end
 
         # Test if this record is in a list
@@ -196,7 +192,7 @@ module ActiveRecord
           def bottom_item(except = nil)
             conditions = scope_condition
             conditions = "#{conditions} AND #{self.class.primary_key} != #{except.id}" if except
-            acts_as_list_class.where(conditions).order("#{position_column} DESC").first
+            self.class.where(conditions).order("#{position_column} DESC").first
           end
 
           # Forces item to assume the bottom position in the list.
@@ -211,39 +207,39 @@ module ActiveRecord
 
           # This has the effect of moving all the higher items up one.
           def decrement_positions_on_higher_items(position)
-            acts_as_list_class.update_all(
-              "#{position_column} = (#{position_column} - 1)", "#{scope_condition} AND #{position_column} <= #{position}"
-            )
+            self.class
+              .where("#{scope_condition} AND #{position_column} <= #{position}")
+              .update_all("#{position_column} = (#{position_column} - 1)")
           end
 
           # This has the effect of moving all the lower items up one.
           def decrement_positions_on_lower_items
             return unless in_list?
-            acts_as_list_class.update_all(
-              "#{position_column} = (#{position_column} - 1)", "#{scope_condition} AND #{position_column} > #{send(position_column).to_i}"
-            )
+            self.class
+              .where("#{scope_condition} AND #{position_column} > #{send(position_column).to_i}")
+              .update_all("#{position_column} = (#{position_column} - 1)")
           end
 
           # This has the effect of moving all the higher items down one.
           def increment_positions_on_higher_items
             return unless in_list?
-            acts_as_list_class.update_all(
-              "#{position_column} = (#{position_column} + 1)", "#{scope_condition} AND #{position_column} < #{send(position_column).to_i}"
-            )
+            self.class
+              .where("#{scope_condition} AND #{position_column} < #{send(position_column).to_i}")
+              .update_all("#{position_column} = (#{position_column} + 1)")
           end
 
           # This has the effect of moving all the lower items down one.
           def increment_positions_on_lower_items(position)
-            acts_as_list_class.update_all(
-              "#{position_column} = (#{position_column} + 1)", "#{scope_condition} AND #{position_column} >= #{position}"
-           )
+            self.class
+              .where("#{scope_condition} AND #{position_column} >= #{position}")
+              .update_all("#{position_column} = (#{position_column} + 1)")
           end
 
           # Increments position (<tt>position_column</tt>) of all items in the list.
           def increment_positions_on_all_items
-            acts_as_list_class.update_all(
-              "#{position_column} = (#{position_column} + 1)",  "#{scope_condition}"
-            )
+            self.class
+              .where("#{scope_condition}")
+              .update_all("#{position_column} = (#{position_column} + 1)")
           end
 
           def insert_at_position(position)
