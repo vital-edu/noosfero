@@ -72,7 +72,7 @@ class Product < ApplicationRecord
     ).uniq
   }
 
-  scope :recent, -> limit { order('id DESC').limit(limit) }
+  scope :recent, -> limit=nil { order('id DESC').limit(limit) }
 
   after_update :save_image
 

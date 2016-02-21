@@ -36,7 +36,7 @@ module NavigationHelpers
     when /edit (.*Block) of (.+)/
       owner = Profile[$2]
       klass = $1.constantize
-      block = klass.find(:all).select{|i| i.owner == owner}.first
+      block = klass.all.select{|i| i.owner == owner}.first
       "/myprofile/#{$2}/profile_design/edit/#{block.id}"
 
     when /^(.*)'s homepage$/

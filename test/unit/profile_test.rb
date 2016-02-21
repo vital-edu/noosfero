@@ -1326,7 +1326,7 @@ class ProfileTest < ActiveSupport::TestCase
     task2 = Task.create!(:requestor => person, :target => another)
 
     person.stubs(:is_admin?).with(other).returns(true)
-    Environment.find(:all).select{|i| i != other }.each do |env|
+    Environment.all.select{|i| i != other }.each do |env|
       person.stubs(:is_admin?).with(env).returns(false)
     end
 

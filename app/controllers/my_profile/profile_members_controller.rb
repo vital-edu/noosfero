@@ -41,7 +41,7 @@ class ProfileMembersController < MyProfileController
       redirect_to :action => 'index'
     else
       @member = Person.find(params[:person])
-      @roles = environment.roles.find(:all).select{ |r| r.has_kind?('Profile') }
+      @roles = environment.roles.all.select{ |r| r.has_kind?('Profile') }
       render :action => 'affiliate'
     end
   end

@@ -88,7 +88,7 @@ class Category < ApplicationRecord
 
   def children_for_menu
     results = []
-    pending = children.where(display_in_menu: true).all
+    pending = Array(children.where(display_in_menu: true).all)
     while pending.present?
       cat = pending.shift
       results << cat

@@ -29,11 +29,10 @@ class SnifferPlugin::Profile < ApplicationRecord
     ids = ids.split(',')
     self.product_categories = []
     self.product_categories = ProductCategory.find(ids)
-    self.opportunities.
-         find(:all, :conditions => {:opportunity_id => ids}).each do |o|
-           o.opportunity_type = 'ProductCategory'
-           o.save!
-         end
+    self.opportunities.where(opportunity_id: ids).each do |o|
+      o.opportunity_type = 'ProductCategory'
+      o.save!
+    end
   end
 
   def profile_input_categories

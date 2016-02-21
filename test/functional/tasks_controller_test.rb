@@ -295,7 +295,7 @@ class TasksControllerTest < ActionController::TestCase
     t = SuggestArticle.create!(:article => {:name => 'test name', :body => 'test body'}, :name => 'some name', :email => 'test@localhost.com', :target => c)
 
     post :close, :tasks => {t.id => { :task => {}, :decision => "finish"}}
-    assert_not_nil TinyMceArticle.find(:first)
+    assert_not_nil TinyMceArticle.first
   end
 
   should "change the article's attributes on suggested article task approval" do
@@ -311,11 +311,11 @@ class TasksControllerTest < ActionController::TestCase
     t.save!
 
     post :close, :tasks => {t.id => { :task => {:article => {:name => 'new article name', :body => 'new body', :source => 'http://www.noosfero.com', :source_name => 'new source'}, :name => 'new name'}, :decision => "finish"}}
-    assert_equal 'new article name', TinyMceArticle.find(:first).name
-    assert_equal 'new name', TinyMceArticle.find(:first).author_name
-    assert_equal 'new body', TinyMceArticle.find(:first).body
-    assert_equal 'http://www.noosfero.com', TinyMceArticle.find(:first).source
-    assert_equal 'new source', TinyMceArticle.find(:first).source_name
+    assert_equal 'new article name', TinyMceArticle.first.name
+    assert_equal 'new name', TinyMceArticle.first.author_name
+    assert_equal 'new body', TinyMceArticle.first.body
+    assert_equal 'http://www.noosfero.com', TinyMceArticle.first.source
+    assert_equal 'new source', TinyMceArticle.first.source_name
   end
 
   should "display name from article suggestion when requestor was not setted" do

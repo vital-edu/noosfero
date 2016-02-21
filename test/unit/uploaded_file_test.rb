@@ -320,7 +320,7 @@ class UploadedFileTest < ActiveSupport::TestCase
   should 'use gallery as target for action tracker' do
     gallery = fast_create(Gallery, :profile_id => profile.id)
     image = create(UploadedFile, :uploaded_data => fixture_file_upload('/files/rails.png', 'image/png'), :parent => gallery, :profile => profile)
-    activity = ActionTracker::Record.find_last_by_verb 'upload_image'
+    activity = ActionTracker::Record.where(verb: 'upload_image').last
     assert_equal gallery, activity.target
   end
 

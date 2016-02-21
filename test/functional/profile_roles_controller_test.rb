@@ -7,7 +7,7 @@ class ProfileRolesControllerTest < ActionController::TestCase
     @controller = ProfileRolesController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    @role = Role.find(:first)
+    @role = Role.first
   end
 
   should 'create a custom role' do
