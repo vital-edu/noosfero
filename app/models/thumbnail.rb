@@ -1,4 +1,4 @@
-class Thumbnail < ActiveRecord::Base
+class Thumbnail < ApplicationRecord
 
   has_attachment :storage => :file_system,
     :content_type => :image, :max_size => 5.megabytes, processor: 'Rmagick'

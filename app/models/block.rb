@@ -1,4 +1,4 @@
-class Block < ActiveRecord::Base
+class Block < ApplicationRecord
 
   # to be able to generate HTML
   include ActionView::Helpers::UrlHelper

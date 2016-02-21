@@ -1,4 +1,4 @@
-class SnifferPlugin::Profile < ActiveRecord::Base
+class SnifferPlugin::Profile < ApplicationRecord
 
   self.table_name = :sniffer_plugin_profiles
 

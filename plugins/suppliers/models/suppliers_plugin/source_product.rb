@@ -1,4 +1,4 @@
-class SuppliersPlugin::SourceProduct < ActiveRecord::Base
+class SuppliersPlugin::SourceProduct < ApplicationRecord
 
   default_scope include: [:from_product, :to_product]
 
