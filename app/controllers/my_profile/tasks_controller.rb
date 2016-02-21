@@ -82,7 +82,7 @@ class TasksController < MyProfileController
   end
 
   def list_requested
-    @tasks = Task.without_spam.find_all_by_requestor_id(profile.id)
+    @tasks = Task.without_spam.where(requestor_id: profile.id)
   end
 
   def ticket_details

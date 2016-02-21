@@ -9,7 +9,7 @@ class StoaPlugin::UspAlunoTurmaGrad < ApplicationRecord
   end
 
   def self.classrooms_from_person(usp_id)
-    StoaPlugin::UspAlunoTurmaGrad.find_all_by_codpes(usp_id)
+    StoaPlugin::UspAlunoTurmaGrad.where(codpes: usp_id)
   end
 
 end

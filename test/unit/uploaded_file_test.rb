@@ -329,10 +329,10 @@ class UploadedFileTest < ActiveSupport::TestCase
     gallery = fast_create(Gallery, :profile_id => profile.id)
 
     image1 = UploadedFile.create!(:uploaded_data => fixture_file_upload('/files/rails.png', 'image/png'), :parent => gallery, :profile => profile)
-    assert_equal 1, ActionTracker::Record.find_all_by_verb('upload_image').count
+    assert_equal 1, ActionTracker::Record.where(verb: 'upload_image').count
 
     image2 = UploadedFile.create!(:uploaded_data => fixture_file_upload('/files/other-pic.jpg', 'image/jpg'), :parent => gallery, :profile => profile)
-    assert_equal 1, ActionTracker::Record.find_all_by_verb('upload_image').count
+    assert_equal 1, ActionTracker::Record.where(verb: 'upload_image').count
   end
 
   {

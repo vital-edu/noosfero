@@ -447,7 +447,7 @@ class Article < ApplicationRecord
 
   def rotate_translations
     unless self.translations.empty?
-      rotate = self.translations.all
+      rotate = Array(self.translations.all)
       root = rotate.shift
       root.update_attribute(:translation_of_id, nil)
       root.translations = rotate

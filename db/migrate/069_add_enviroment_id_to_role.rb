@@ -18,10 +18,10 @@ class AddEnviromentIdToRole < ActiveRecord::Migration
         re = RoleWithEnvironment.new(role.attributes)
         re.environment = env
         re.save
-        RoleAssignment.find_all_by_role_id(role.id).select{|ra| ra.resource && (ra.resource.kind_of?(Profile) ? ra.resource.environment_id : ra.resource.id) == env.id }.each do |ra|
-          ra.role_id = re.id
-          ra.save
-        end
+        RoleAssignment \
+          .where(role_id: role.id)
+          .select{ |ra| ra.resource && (ra.resource.kind_of?(Profile) ? ra.resource.environment_id : ra.resource.id) == env.id }
+          .each{ |ra| ra.role_id = re.id; ra.save }
       end
     end
     roles.each(&:destroy)
@@ -37,7 +37,7 @@ class AddEnviromentIdToRole < ActiveRecord::Migration
         roles_by_name[role.name] ||= roles_by_key[role.key] ||= role
       end
       role = roles_by_name[re.name] ||= Role.create(re.attributes) unless role
-      RoleAssignment.find_all_by_role_id(re.id).each do |ra|
+      RoleAssignment.where(role_id: re.id).each do |ra|
         ra.role_id = role.id
         ra.save
       end
