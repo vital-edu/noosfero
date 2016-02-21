@@ -111,6 +111,9 @@ class Profile < ActiveRecord::Base
   }
   scope :no_templates, -> { where is_template: false }
 
+  scope :recent, -> limit { order('id DESC').limit(limit) }
+
+
   # Returns a scoped object to select profiles in a given location or in a radius
   # distance from the given location center.
   # The parameter can be the `request.params` with the keys:
@@ -191,18 +194,15 @@ class Profile < ActiveRecord::Base
   scope :is_public, -> { where visible: true, public_profile: true, secret: false }
   scope :enabled, -> { where enabled: true }
 
-  # Subclasses must override this method
-  scope :more_popular
-
-  scope :more_active,  :order => 'activities_count DESC'
-  scope :more_recent, :order => "created_at DESC"
+  scope :more_active, -> { order 'activities_count DESC' }
+  scope :more_recent, -> { order "created_at DESC" }
 
   acts_as_trackable :dependent => :destroy
 
   has_many :profile_activities
   has_many :action_tracker_notifications, :foreign_key => 'profile_id'
-  has_many :tracked_notifications, :through => :action_tracker_notifications, :source => :action_tracker, :order => 'updated_at DESC'
-  has_many :scraps_received, :class_name => 'Scrap', :foreign_key => :receiver_id, :order => "updated_at DESC", :dependent => :destroy
+  has_many :tracked_notifications, -> { order 'updated_at DESC' }, through: :action_tracker_notifications, source: :action_tracker
+  has_many :scraps_received, -> { order 'updated_at DESC' }, class_name: 'Scrap', foreign_key: :receiver_id, dependent: :destroy
   belongs_to :template, :class_name => 'Profile', :foreign_key => 'template_id'
 
   has_many :comments_received, :class_name => 'Comment', :through => :articles, :source => :comments
@@ -280,7 +280,7 @@ class Profile < ActiveRecord::Base
 
   has_many :tasks, :dependent => :destroy, :as => 'target'
 
-  has_many :events, :source => 'articles', :class_name => 'Event', :order => 'start_date'
+  has_many :events, -> { order 'start_date' }, source: 'articles', class_name: 'Event'
 
   def find_in_all_tasks(task_id)
     begin
@@ -774,10 +774,6 @@ private :generate_url, :url_options
     end
   end
 
-  def self.recent(limit = nil)
-    self.find(:all, :order => 'id desc', :limit => limit)
-  end
-
   # returns +true+ if the given +user+ can see profile information about this
   # +profile+, and +false+ otherwise.
   def display_info_to?(user)
@@ -871,7 +867,7 @@ private :generate_url, :url_options
   has_many :blogs, :source => 'articles', :class_name => 'Blog'
 
   def blog
-    self.has_blog? ? self.blogs.first(:order => 'id') : nil
+    self.has_blog? ? self.blogs.order(:id).first : nil
   end
 
   def has_blog?
@@ -881,7 +877,7 @@ private :generate_url, :url_options
   has_many :forums, :source => 'articles', :class_name => 'Forum'
 
   def forum
-    self.has_forum? ? self.forums.first(:order => 'id') : nil
+    self.has_forum? ? self.forums.order(:id).first : nil
   end
 
   def has_forum?

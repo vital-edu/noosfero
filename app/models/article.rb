@@ -77,7 +77,7 @@ class Article < ActiveRecord::Base
   belongs_to :last_changed_by, :class_name => 'Person', :foreign_key => 'last_changed_by_id'
   belongs_to :created_by, :class_name => 'Person', :foreign_key => 'created_by_id'
 
-  has_many :comments, :class_name => 'Comment', :as => 'source', :dependent => :destroy, :order => 'created_at asc'
+  has_many :comments, -> { order 'created_at asc' }, class_name: 'Comment', as: 'source', dependent: :destroy
 
   has_many :article_categorizations, -> { where 'articles_categories.virtual = ?', false }
   has_many :categories, :through => :article_categorizations
@@ -280,7 +280,7 @@ class Article < ActiveRecord::Base
   # retrives the most commented articles, sorted by the comment count (largest
   # first)
   def self.most_commented(limit)
-    paginate(:order => 'comments_count DESC', :page => 1, :per_page => limit)
+    order('comments_count DESC').paginate(page: 1, per_page: limit)
   end
 
   scope :more_popular, -> { order 'hits DESC' }
@@ -289,7 +289,7 @@ class Article < ActiveRecord::Base
   }
 
   def self.recent(limit = nil, extra_conditions = {}, pagination = true)
-    result = scoped({:conditions => extra_conditions}).
+    result = where(extra_conditions).
       is_public.
       relevant_as_recent.
       limit(limit).

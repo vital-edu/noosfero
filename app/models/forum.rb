@@ -1,6 +1,6 @@
 class Forum < Folder
 
-  acts_as_having_posts :order => 'updated_at DESC'
+  acts_as_having_posts -> { order 'updated_at DESC' }
   include PostsLimit
 
   attr_accessible :has_terms_of_use, :terms_of_use, :topic_creation

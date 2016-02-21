@@ -57,11 +57,10 @@ class CmsController < MyProfileController
 
   def index
     @article = nil
-    @articles = profile.top_level_articles.paginate(
-      :order => "case when type = 'Folder' then 0 when type ='Blog' then 1 else 2 end, updated_at DESC",
-      :per_page => per_page,
-      :page => params[:npage]
-    )
+    @articles = profile.top_level_articles
+      .order("case when type = 'Folder' then 0 when type ='Blog' then 1 else 2 end, updated_at DESC")
+      .paginate(per_page: per_page, page: params[:npage])
+
     render :action => 'view'
   end
 

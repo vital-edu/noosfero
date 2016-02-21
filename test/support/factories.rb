@@ -13,7 +13,7 @@ module Noosfero::Factory
     else
       fast_insert(klass, data)
     end
-    obj = klass.last(:order => "id")
+    obj = klass.order(:id).last
     if options[:category]
       categories = options[:category]
       unless categories.is_a?(Array)
@@ -132,7 +132,7 @@ module Noosfero::Factory
     values = names.map {|k| ActiveRecord::Base.send(:sanitize_sql_array, ['?', data[k]]) }
     sql = 'insert into %s(%s) values (%s)' % [klass.table_name, names.join(','), values.join(',')]
     klass.connection.execute(sql)
-    klass.last(:order => 'id')
+    klass.order(:id).last
   end
 
   def fast_insert_with_timestamps(klass, data)

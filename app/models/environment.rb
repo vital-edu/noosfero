@@ -245,7 +245,7 @@ class Environment < ActiveRecord::Base
 
   acts_as_accessible
 
-  has_many :units, :order => 'position'
+  has_many :units, -> { order 'position' }
   has_many :production_costs, :as => :owner
 
   def superior_intances
@@ -711,7 +711,7 @@ class Environment < ActiveRecord::Base
   def default_hostname(email_hostname = false)
     domain = 'localhost'
     unless self.domains(true).empty?
-      domain = (self.domains.find_by_is_default(true) || self.domains.find(:first, :order => 'id')).name
+      domain = (self.domains.find_by_is_default(true) || self.domains.order(:id).first).name
       domain = email_hostname ? domain : (force_www ? ('www.' + domain) : domain)
     end
     domain
