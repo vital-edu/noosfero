@@ -34,39 +34,16 @@ module ActiveRecord
           configuration = { :column => "position", :scope => "1 = 1" }
           configuration.update(options) if options.is_a?(Hash)
 
-          configuration[:scope] = "#{configuration[:scope]}_id".intern if configuration[:scope].is_a?(Symbol) && configuration[:scope].to_s !~ /_id$/
+          include ActiveRecord::Acts::List::InstanceMethods
 
-          if configuration[:scope].is_a?(Symbol)
-            scope_condition_method = %(
-              def scope_condition
-                self.class.send(:sanitize_sql_hash_for_conditions, { :#{configuration[:scope].to_s} => send(:#{configuration[:scope].to_s}) })
-              end
-            )
-          elsif configuration[:scope].is_a?(Array)
-            scope_condition_method = %(
-              def scope_condition
-                attrs = %w(#{configuration[:scope].join(" ")}).inject({}) do |memo,column|
-                  memo[column.intern] = send(column.intern); memo
-                end
-                self.class.send(:sanitize_sql_hash_for_conditions, attrs)
-              end
-            )
-          else
-            scope_condition_method = "def scope_condition() \"#{configuration[:scope]}\" end"
+          define_method :position_column do
+            configuration[:column]
           end
 
-          class_eval <<-EOV
-            include ActiveRecord::Acts::List::InstanceMethods
+          scope :acts_as_list_scope, configuration[:scope]
 
-            def position_column
-              '#{configuration[:column]}'
-            end
-
-            #{scope_condition_method}
-
-            before_destroy :decrement_positions_on_lower_items
-            before_create  :add_to_list_bottom
-          EOV
+          before_destroy :decrement_positions_on_lower_items
+          before_create  :add_to_list_bottom
         end
       end
 
@@ -155,13 +132,19 @@ module ActiveRecord
         # Return the next higher item in the list.
         def higher_item
           return nil unless in_list?
-          self.class.where("#{scope_condition} AND #{position_column} = #{(send(position_column).to_i - 1).to_s}").first
+          self.class
+            .acts_as_list_scope(self)
+            .where("#{position_column} = #{(send(position_column).to_i - 1).to_s}")
+            .first
         end
 
         # Return the next lower item in the list.
         def lower_item
           return nil unless in_list?
-          self.class.where("#{scope_condition} AND #{position_column} = #{(send(position_column).to_i + 1).to_s}").first
+          self.class
+            .acts_as_list_scope(self)
+            .where("#{position_column} = #{(send(position_column).to_i + 1).to_s}")
+            .first
         end
 
         # Test if this record is in a list
@@ -178,9 +161,6 @@ module ActiveRecord
             self[position_column] = bottom_position_in_list.to_i + 1
           end
 
-          # Overwrite this method to define the scope of the list changes
-          def scope_condition() "1" end
-
           # Returns the bottom position number in the list.
           #   bottom_position_in_list    # => 2
           def bottom_position_in_list(except = nil)
@@ -190,9 +170,11 @@ module ActiveRecord
 
           # Returns the bottom item
           def bottom_item(except = nil)
-            conditions = scope_condition
-            conditions = "#{conditions} AND #{self.class.primary_key} != #{except.id}" if except
-            self.class.where(conditions).order("#{position_column} DESC").first
+            conditions = "#{self.class.primary_key} != #{except.id}" if except
+            self.class
+              .acts_as_list_scope(self)
+              .where(conditions).order("#{position_column} DESC")
+              .first
           end
 
           # Forces item to assume the bottom position in the list.
@@ -208,7 +190,8 @@ module ActiveRecord
           # This has the effect of moving all the higher items up one.
           def decrement_positions_on_higher_items(position)
             self.class
-              .where("#{scope_condition} AND #{position_column} <= #{position}")
+              .acts_as_list_scope(self)
+              .where("#{position_column} <= #{position}")
               .update_all("#{position_column} = (#{position_column} - 1)")
           end
 
@@ -216,7 +199,8 @@ module ActiveRecord
           def decrement_positions_on_lower_items
             return unless in_list?
             self.class
-              .where("#{scope_condition} AND #{position_column} > #{send(position_column).to_i}")
+              .acts_as_list_scope(self)
+              .where("#{position_column} > #{send(position_column).to_i}")
               .update_all("#{position_column} = (#{position_column} - 1)")
           end
 
@@ -224,21 +208,23 @@ module ActiveRecord
           def increment_positions_on_higher_items
             return unless in_list?
             self.class
-              .where("#{scope_condition} AND #{position_column} < #{send(position_column).to_i}")
+              .acts_as_list_scope(self)
+              .where("#{position_column} < #{send(position_column).to_i}")
               .update_all("#{position_column} = (#{position_column} + 1)")
           end
 
           # This has the effect of moving all the lower items down one.
           def increment_positions_on_lower_items(position)
             self.class
-              .where("#{scope_condition} AND #{position_column} >= #{position}")
+              .acts_as_list_scope(self)
+              .where("#{position_column} >= #{position}")
               .update_all("#{position_column} = (#{position_column} + 1)")
           end
 
           # Increments position (<tt>position_column</tt>) of all items in the list.
           def increment_positions_on_all_items
             self.class
-              .where("#{scope_condition}")
+              .acts_as_list_scope(self)
               .update_all("#{position_column} = (#{position_column} + 1)")
           end
 
