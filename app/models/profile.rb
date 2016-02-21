@@ -55,7 +55,7 @@ class Profile < ApplicationRecord
     end
     private
     def self.find_role(name, env_id)
-      ::Role.find_by key: 'profile_#{name}', environment_id: env_id
+      ::Role.find_by key: "profile_#{name}", environment_id: env_id
     end
   end
 

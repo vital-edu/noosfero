@@ -16,7 +16,7 @@ class Person < Profile
   scope :members_of, -> resources {
     resources = Array(resources)
     conditions = resources.map {|resource| "role_assignments.resource_type = '#{resource.class.base_class.name}' AND role_assignments.resource_id = #{resource.id || -1}"}.join(' OR ')
-    select('DISTINCT profiles.*').joins(:role_assignments).where([conditions])
+    select('DISTINCT profiles.*').joins(:role_assignments).where(conditions)
   }
 
   scope :not_members_of, -> resources {
