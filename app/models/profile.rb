@@ -165,14 +165,6 @@ class Profile < ApplicationRecord
     members.order('profiles.name')
   end
 
-  class << self
-    def count_with_distinct(*args)
-      options = args.last || {}
-      count_without_distinct(:id, {:distinct => true}.merge(options))
-    end
-    alias_method_chain :count, :distinct
-  end
-
   def members_by_role(roles)
     Person.members_of(self).by_role(roles)
   end

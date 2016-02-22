@@ -128,7 +128,7 @@ class ApplicationController < ActionController::Base
     # Sets text domain based on request host for custom internationalization
     FastGettext.text_domain = Domain.custom_locale(request.host)
 
-    @domain = Domain.by_name(name: request.host)
+    @domain = Domain.by_name(request.host)
     if @domain.nil?
       @environment = Environment.default
       # Avoid crashes on test and development setups
